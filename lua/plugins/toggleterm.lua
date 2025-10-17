@@ -63,7 +63,8 @@ return {
       term:toggle()
 
       -- if now visible in current win, go to insert
-      if term:is_open() and vim.api.nvim_buf_get_option(term.bufnr, "buftype") == "terminal" then
+      -- Idiomatic & simple
+      if term:is_open() and vim.bo[term.bufnr].buftype == "terminal" then
         vim.cmd("startinsert")
       end
 
