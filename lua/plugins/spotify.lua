@@ -60,6 +60,16 @@ local function spotify_previous()
   vim.notify("Spotify: moved to the previous track")
 end
 
+local function spotify_unpause()
+  local endpoint = with_device("/me/player/play")
+  if not endpoint then
+    return
+  end
+
+  require("spotify.api").call(endpoint, "put")
+  vim.notify("Spotify: paused playback")
+end
+
 local function spotify_pause()
   local endpoint = with_device("/me/player/pause")
   if not endpoint then
@@ -133,13 +143,14 @@ return {
   },
   config = function()
     require("spotify").setup({
-      client_id = "797f6a8126374489994e095f10781b5c",
-      client_secret = "85e6e30543dd44759726c17936142e51",
+      client_id = "CLIENT_ID_GOES_HERE",
+      client_secret = "SECRET_GOES_HERE",
     })
 
     vim.keymap.set("n", "<leader>mn", spotify_next, { desc = "Spotify next track" })
     vim.keymap.set("n", "<leader>mb", spotify_previous, { desc = "Spotify previous track" })
     vim.keymap.set("n", "<leader>mp", spotify_pause, { desc = "Spotify pause" })
+    vim.keymap.set("n", "<leader>mu", spotify_unpause, { desc = "Spotify unpause" })
     vim.keymap.set("n", "<leader>ms", prompt_for_song, { desc = "Spotify search and play" })
 
     vim.api.nvim_create_user_command("SpotifyNext", spotify_next, {
@@ -154,6 +165,11 @@ return {
 
     vim.api.nvim_create_user_command("SpotifyPause", spotify_pause, {
       desc = "Pause Spotify playback",
+      force = true,
+    })
+
+    vim.api.nvim_create_user_command("SpotifyUnpause", spotify_unpause, {
+      desc = "Start Spotify playback",
       force = true,
     })
 
